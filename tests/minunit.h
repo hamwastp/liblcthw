@@ -22,6 +22,49 @@
     }
 /* __END__ */
 
+/* __ADD__ */
+#define _mu_assert_fail_msg(actual, expected) \
+    fprintf(stderr,                           \
+        "\033[41;1m[FAIL]\033[0m");           \
+    log_err("actual:" #actual,                \
+        "expected:" #expected);
+
+#define _mu_assert_pass_msg() \
+    fprintf(stderr,           \
+        "\033[32;1m[PASS]\n\033[0m");
+
+#define mu_assert_eq(actual, expected)        \
+    if (!(actual == expected)) {              \
+        _mu_assert_fail_msg(actual, expected) \
+    } else {                                  \
+        _mu_assert_pass_msg()                 \
+    }
+
+#define mu_assert_not_eq(actual, expected)    \
+    if (actual == expected) {                 \
+        _mu_assert_fail_msg(actual, expected) \
+    } else {                                  \
+        _mu_assert_pass_msg()                 \
+    }
+
+#define mu_assert_str_eq(actual, expected)    \
+    if (strcmp((const char*)(actual),         \
+            (const char*)(expected))) {       \
+        _mu_assert_fail_msg(actual, expected) \
+    } else {                                  \
+        _mu_assert_pass_msg()                 \
+    }
+
+#define mu_assert_str_not_eq(actual, expected) \
+    if (!strcmp((const char*)(actual),         \
+            (const char*)(expected))) {        \
+                                               \
+        _mu_assert_fail_msg(actual, expected)  \
+    } else {                                   \
+        _mu_assert_pass_msg()                  \
+    }
+/* __END__ */
+
 #define mu_run_test(test)          \
     debug("\n-----%s", " " #test); \
     message = test();              \
@@ -98,15 +141,14 @@ void register_testcase(testcase_func f, const char* name);
 void register_testcase(testcase_func f, const char* name)
 {
     if (mu_alltest == NULL) {
-        mu_alltest = (MU_TestInfo*)malloc(sizeof(MU_TestInfo*));
+        mu_alltest = (MU_TestInfo*)malloc(sizeof(MU_TestInfo));
         if (mu_alltest == NULL) {
             return;
         }
 
         mu_alltest_list = mu_alltest;
     } else {
-
-        mu_alltest->next = (MU_TestInfo*)malloc(sizeof(MU_TestInfo*));
+        mu_alltest->next = (MU_TestInfo*)malloc(sizeof(MU_TestInfo));
         if (mu_alltest->next == NULL) {
             return;
         }
@@ -129,11 +171,14 @@ __attribute((destructor)) void mutestcases_destroy()
 {
     MU_TestInfo* p_mu_alltest = mu_alltest_list;
     while (p_mu_alltest != NULL) {
-        free(p_mu_alltest);
+        MU_TestInfo* prev = p_mu_alltest;
         p_mu_alltest = p_mu_alltest->next;
+        free(prev);
     }
     return;
 };
-    // __END__
 
+// __END__
+
+// ...
 #endif
