@@ -6,6 +6,8 @@
 
 #include <stdlib.h>
 
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
 #define mu_suite_start() char* message = NULL
 
 #define mu_assert(test, message)          \
@@ -23,45 +25,48 @@
 /* __END__ */
 
 /* __ADD__ */
-#define _mu_assert_fail_msg(actual, expected) \
-    fprintf(stderr,                           \
-        "\033[41;1m[FAIL]\033[0m");           \
-    log_err("actual:" #actual,                \
-        "expected:" #expected);
+#define _mu_assert_eq_fail_msg(actual, expected) \
+    fprintf(stderr, "\033[41;1m[FAIL]\033[0m");  \
+    log_err("actual:%ld, expected:%ld\n",        \
+        (long int)actual, (long int)expected);
+
+#define _mu_assert_str_eq_fail_msg(actual, expected) \
+    fprintf(stderr, "\033[41;1m[FAIL]\033[0m");      \
+    log_err("actual:%s, expected:%s\n", actual, expected);
 
 #define _mu_assert_pass_msg() \
     fprintf(stderr,           \
         "\033[32;1m[PASS]\n\033[0m");
 
-#define mu_assert_eq(actual, expected)        \
-    if (!(actual == expected)) {              \
-        _mu_assert_fail_msg(actual, expected) \
-    } else {                                  \
-        _mu_assert_pass_msg()                 \
+#define mu_assert_eq(actual, expected)           \
+    if (!(actual == expected)) {                 \
+        _mu_assert_eq_fail_msg(actual, expected) \
+    } else {                                     \
+        _mu_assert_pass_msg()                    \
     }
 
-#define mu_assert_not_eq(actual, expected)    \
-    if (actual == expected) {                 \
-        _mu_assert_fail_msg(actual, expected) \
-    } else {                                  \
-        _mu_assert_pass_msg()                 \
+#define mu_assert_not_eq(actual, expected)       \
+    if (actual == expected) {                    \
+        _mu_assert_eq_fail_msg(actual, expected) \
+    } else {                                     \
+        _mu_assert_pass_msg()                    \
     }
 
-#define mu_assert_str_eq(actual, expected)    \
-    if (strcmp((const char*)(actual),         \
-            (const char*)(expected))) {       \
-        _mu_assert_fail_msg(actual, expected) \
-    } else {                                  \
-        _mu_assert_pass_msg()                 \
+#define mu_assert_str_eq(actual, expected)           \
+    if (strcmp((const char*)(actual),                \
+            (const char*)(expected))) {              \
+        _mu_assert_str_eq_fail_msg(actual, expected) \
+    } else {                                         \
+        _mu_assert_pass_msg()                        \
     }
 
-#define mu_assert_str_not_eq(actual, expected) \
-    if (!strcmp((const char*)(actual),         \
-            (const char*)(expected))) {        \
-                                               \
-        _mu_assert_fail_msg(actual, expected)  \
-    } else {                                   \
-        _mu_assert_pass_msg()                  \
+#define mu_assert_str_not_eq(actual, expected)       \
+    if (!strcmp((const char*)(actual),               \
+            (const char*)(expected))) {              \
+                                                     \
+        _mu_assert_str_eq_fail_msg(actual, expected) \
+    } else {                                         \
+        _mu_assert_pass_msg()                        \
     }
 /* __END__ */
 
@@ -82,6 +87,9 @@
 #define RUN_TESTS(name)                         \
     int main(int argc, char* argv[])            \
     {                                           \
+        if (argc < 1) {                         \
+            return -1;                          \
+        }                                       \
         debug("----- RUNNING: %s", argv[0]);    \
         printf("----\nRUNNING: %s\n", argv[0]); \
         char* result = name();                  \

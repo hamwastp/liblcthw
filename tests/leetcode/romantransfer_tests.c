@@ -7,30 +7,14 @@
 
 MU_TEST(III)
 {
-    int ret = romanToInt((char *)"III");
+    int ret = romanToInt((char*)"III");
     mu_assert(ret == 3, "Failed to test romanToInt.");
-    return NULL;
-}
-
-MU_TEST(MCMXCIV_FAIL)
-{
-    int ret = romanToInt((char *)"MCMXCIV");
-    mu_assert(ret != 1994, "Failed Test");
-
-    return NULL;
-}
-
-MU_TEST(MCMXCIV_NULLMSG)
-{
-    int ret = romanToInt((char *)"MCMXCIV");
-    mu_assert(ret != 1994, "");
-
     return NULL;
 }
 
 MU_TEST(MCMXCIV)
 {
-    int ret = romanToInt((char *)"MCMXCIV");
+    int ret = romanToInt((char*)"MCMXCIV");
     mu_assert(ret == 1994, "Failed to test MCMXCIV.");
 
     return NULL;
